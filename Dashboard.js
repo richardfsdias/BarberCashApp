@@ -38,7 +38,25 @@ const Dashboard = () => {
 
       // Define os estados com fallback para evitar crash
       setSaldos(resumo.success === false ? { valor: 0, entradas: 0, saidas: 0 } : resumo);
-      setDadosGrafico(grafico.success === false ? [] : grafico);
+      const total = resumo.entradas + resumo.saidas;
+
+      const dadosReceitaDespesa = [
+        {
+          name: `Receita (${total > 0 ? ((resumo.entradas / total)* 100).toFixed(0) : 0}%)`,
+          valor: resumo.entradas,
+          color: "#2ecc71",
+          legendFontColor: "#fff",
+          legendFontSize: 12
+        },
+        {
+          name: `Despesa (${total > 0 ? ((resumo.saidas / total) * 100).toFixed(0) : 0}%)`,
+          valor: resumo.saidas,
+          color: "#e74c3c",
+          legendFontColor: "#fff",
+          legendFontSize: 12
+        }
+      ]
+      setDadosGrafico(dadosReceitaDespesa);
       setUltimosLancamentos(lancamentos.success === false ? [] : lancamentos);
 
     } catch (err) {
@@ -105,39 +123,49 @@ const Dashboard = () => {
 
       {/* GRÁFICO DE PIZZA */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Entradas por Categoria ({periodoAtivo.charAt(0).toUpperCase() + periodoAtivo.slice(1)})</Text>
+        <Text style={styles.cardTitle}>Receita & Despesas ({periodoAtivo.charAt(0).toUpperCase() + periodoAtivo.slice(1)})</Text>
         <View style={styles.graficoContainer}>
           {temDadosGrafico ? (
-            <PieChart
-              data={dadosGrafico}
-              width={screenWidth - 40}
-              height={220}
-              chartConfig={{ 
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                propsForLabels: {
-                  fontSize: 12,
-                },
-              }}
-              accessor="valor"
-              backgroundColor="transparent"
-              paddingLeft="15"
-              absolute
-            />
+            <View style={{marginLeft: 160}}>
+              <PieChart
+                data={dadosGrafico}
+                width={screenWidth - 40}
+                height={220}
+                hasLegend={false}
+                chartConfig={{ 
+                  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  propsForLabels: {
+                    fontSize: 12,
+                  },
+                }}
+                accessor="valor"
+                backgroundColor="transparent"
+                absolute
+              />
+            </View>
           ) : (
             <Text style={styles.semDadosTexto}>Nenhuma entrada registrada.</Text>
           )}
+        </View>
+          <View style={styles.legendaContainer}> 
+          {dadosGrafico.map((item, index) => (
+            <View key={index} style={styles.legendaItem}>  
+              <View style={[styles.legendaCor, { backgroundColor: item.color }]} />
+              <Text style={styles.legendaTexto}>{item.name}</Text>
+    </View>
+  ))}
         </View>
       </View>
 
       {/* ÚLTIMOS LANÇAMENTOS */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Últimos Lançamentos ({periodoAtivo.charAt(0).toUpperCase() + periodoAtivo.slice(1)})</Text>
+        <Text style={styles.cardTitle}>Últimos Lançamentos</Text>
         {ultimosLancamentos.length > 0 ? (
           ultimosLancamentos.map((item) => (
             <View key={item.id} style={styles.lancamentoItem}>
               <Text style={styles.lancamentoDescricao}>{item.descricao}</Text>
               <Text style={item.tipo === 'Entrada' ? styles.lancamentoValorEntrada : styles.lancamentoValorSaida}>
-                {item.tipo === 'Saída' ? '- R$' : 'R$'} {Math.abs(item.valor).toFixed(2).replace('.', ',')}
+                {`${item.tipo === 'Saída' ? '- R$' : 'R$'}${Math.abs(item.valor).toFixed(2).replace('.', ',')}`}
               </Text>
             </View>
           ))
@@ -176,13 +204,14 @@ const styles = StyleSheet.create({
   cardPrincipalValor: { fontSize: 42, fontWeight: 'bold', color: '#fff', marginVertical: 5 },
   entradasSaidasContainer: { flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: 15 },
   entradasSaidasBox: { alignItems: 'center', flex: 1 },
-  entradasLabel: { fontSize: 16, color: '#4a90e2', fontWeight: 'bold' },
-  entradasValor: { fontSize: 18, color: '#4a90e2', fontWeight: 'bold' },
+  entradasLabel: { fontSize: 16, color: '#2ecc71', fontWeight: 'bold' },
+  entradasValor: { fontSize: 18, color: '#2ecc71', fontWeight: 'bold' },
   saidasLabel: { fontSize: 16, color: '#e74c3c', fontWeight: 'bold' },
   saidasValor: { fontSize: 18, color: '#e74c3c', fontWeight: 'bold' },
   card: { backgroundColor: 'rgba(0, 107, 111, 0.87)', borderRadius: 15, padding: 20, marginBottom: 20, elevation: 5 },
   cardTitle: { fontSize: 18, fontWeight: 'bold', color: '#fff', marginBottom: 15 },
   graficoContainer: {
+    flex: 1,
     alignItems: 'center',
   },
   semDadosTexto: {
@@ -196,6 +225,27 @@ const styles = StyleSheet.create({
   lancamentoDescricao: { fontSize: 16, color: '#fff' },
   lancamentoValorEntrada: { fontSize: 16, color: '#2ecc71', fontWeight: 'bold' },
   lancamentoValorSaida: { fontSize: 16, color: '#e74c3c', fontWeight: 'bold' },
+
+  legendaContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 15,
+  },
+  legendaItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 10,
+  },
+  legendaCor: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 8,
+  },
+  legendaTexto: {
+    color: "#fff",
+    fontSize: 14,
+  },
 });
 
 export default Dashboard;
