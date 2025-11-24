@@ -120,7 +120,8 @@ const Lancamentos = () => {
       if (!editingItem) setFormaPagamento('Dinheiro');
     } else if (categoria === 'Despesa') {
       setTipo('Saída');
-      setFormaPagamento('');
+      // CORREÇÃO 1A: Não limpar a forma de pagamento para despesas
+      // setFormaPagamento(''); 
     }
   }, [categoria, modalVisivel, editingItem]);
 
@@ -169,9 +170,10 @@ const Lancamentos = () => {
       id_produto_vendido: categoria === 'Venda de Produto' ? itemSelecionadoId : null,
     };
     
-    if (body.categoria === 'Despesa') {
-      body.forma_pagamento = null;
-    }
+    // CORREÇÃO 1B: Remover a limpeza da forma de pagamento para despesas
+    // if (body.categoria === 'Despesa') {
+    //   body.forma_pagamento = null;
+    // }
 
     try {
       const response = await fetch(endpoint, {
@@ -241,7 +243,13 @@ const Lancamentos = () => {
     <View style={styles.tableRow}>
       <View style={styles.tableCellDesc}>
         <Text style={styles.itemDescricao}>{item.descricao}</Text>
-        <Text style={styles.itemCategoria}>{item.categoria} ({item.forma_pagamento || 'N/A'})</Text>
+        {/* CORREÇÃO 2: Exibir a forma de pagamento se for Entrada OU se for Despesa e tiver forma de pagamento */}
+        <Text style={styles.itemCategoria}>
+          {item.categoria} 
+          {item.tipo === 'Entrada' && ` (${item.forma_pagamento || 'N/A'})`}
+          {item.tipo === 'Saída' && item.forma_pagamento && ` (${item.forma_pagamento})`}
+          {item.tipo === 'Saída' && !item.forma_pagamento && ` (Despesa)`}
+        </Text>
         <Text style={styles.itemData}>{new Date(item.data_lancamento).toLocaleDateString('pt-BR')}</Text>
       </View>
       <View style={styles.tableCellValor}>
@@ -311,7 +319,7 @@ const Lancamentos = () => {
       >
         <ScrollView contentContainerStyle={styles.modalScrollContainer}>
           <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>{editingItem ? 'Editar' : 'Novo'} Lançamento</Text>
+            <Text style={styles.modalTitle}>{editingItem ? 'Editar' : 'Adicionar'} Lançamento</Text>
 
             <Text style={styles.pickerLabel}>Categoria</Text>
             <View style={styles.pickerContainer}>
@@ -347,8 +355,9 @@ const Lancamentos = () => {
               onChangeText={setValor} 
             />
 
-            {/* Seletor de Forma de Pagamento (só aparece para Entradas) */}
-            {tipo === 'Entrada' && (
+            {/* CORREÇÃO 3: Exibir Seletor de Forma de Pagamento para Entradas E Despesas */}
+            {/* O tipo é 'Entrada' ou 'Saída'. Se for 'Saída' (Despesa), também deve aparecer. */}
+            {(tipo === 'Entrada' || tipo === 'Saída') && (
               <>
                 <Text style={styles.pickerLabel}>Forma de Pagamento</Text>
                 <View style={styles.pickerContainer}>

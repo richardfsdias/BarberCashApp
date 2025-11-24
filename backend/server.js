@@ -227,12 +227,17 @@ app.get('/lancamentos', (req, res) => {
   }
 
   if (categoria && categoria !== 'Todos') { // Adiciona a verificação 'Todos'
+    if(categoria === 'Despesa'){
+      query+= ' AND tipo = ?';
+      params.push('Saída');
+    }else{
     if (Array.isArray(categoria)) {
       query += ` AND categoria IN (?)`;
       params.push(categoria);
     } else {
-      query += ' AND categoria = ?';
-      params.push(categoria);
+        query += ' AND categoria = ?';
+        params.push(categoria);
+      }
     }
   }
 
