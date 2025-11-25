@@ -9,6 +9,7 @@ import Cadastro from './Cadastro';
 import Dashboard from './Dashboard';
 import Catalogo from './Catalogo';
 import Lancamentos from './Lancamentos';
+import Configuracoes from './Configuracoes';
 
 // Navegação por abas (menu fixo)
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';

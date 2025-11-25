@@ -425,8 +425,6 @@ app.get('/dashboard/ultimos-lancamentos', (req, res) => {
     res.json(dataFormatada);
   });
 });
-
-
 // 5. Iniciar o servidor
 const PORT = 3001; 
 app.listen(PORT, () => {
