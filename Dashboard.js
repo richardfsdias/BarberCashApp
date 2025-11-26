@@ -16,7 +16,7 @@ const Dashboard = () => {
 
   const isFocused = useIsFocused(); // Hook para saber se a tela está em foco
 
-  const API_URL = 'http://192.168.0.164:3001';  //10.0.2.2 TROCAR PARA ESSE IP QUANDO USAR O ANDROID STUDIO, 192.168.0.164 IP PARA USAR NO CELULAR 
+  const API_URL = 'http://10.0.2.2:3001';  //10.0.2.2 TROCAR PARA ESSE IP QUANDO USAR O ANDROID STUDIO, 192.168.0.164 IP PARA USAR NO CELULAR 
 
   // useCallback para evitar recriação desnecessária da função
   const carregarDados = useCallback(async () => {

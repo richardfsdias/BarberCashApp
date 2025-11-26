@@ -9,7 +9,6 @@ import Cadastro from './Cadastro';
 import Dashboard from './Dashboard';
 import Catalogo from './Catalogo';
 import Lancamentos from './Lancamentos';
-import Configuracoes from './Configuracoes';
 
 // Navegação por abas (menu fixo)
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -22,7 +21,7 @@ const Tab = createBottomTabNavigator();
 function MainTabs() {
   return (
     <Tab.Navigator
-      initialRouteName="Dashboard" // DEFINE A TELA INICIAL DO APP
+      initialRouteName="Dashboard"
       screenOptions={({ route }) => ({
         headerShown: false, 
         tabBarStyle: {
@@ -34,17 +33,17 @@ function MainTabs() {
         tabBarActiveTintColor: '#fff', 
         tabBarInactiveTintColor: '#b5b5b5', 
         
-        // 3. LÓGICA DE ÍCONES CORRIGIDA
         tabBarIcon: ({ color, size }) => {
           let iconName;
           
           if (route.name === 'Dashboard') {
-            iconName = 'stats-chart-outline'; // Ícone de gráfico
+            iconName = 'stats-chart-outline';
           } else if (route.name === 'Lançamentos') {
-            iconName = 'add-circle-outline'; // Ícone de adicionar
-          } else if (route.name === 'Catálogo') { // Nome com acento
-            iconName = 'book-outline'; // Ícone de livro (catálogo)
+            iconName = 'add-circle-outline';
+          } else if (route.name === 'Catálogo') { 
+            iconName = 'book-outline';
           }
+          // Ícone de Configurações REMOVIDO
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -54,7 +53,6 @@ function MainTabs() {
         }
       })}
     >
-      {/* 4. TELAS NAS ABAS (Sem espaços ou comentários entre elas) */}
       <Tab.Screen name="Dashboard" component={Dashboard} />
       <Tab.Screen name="Lançamentos" component={Lancamentos} />
       <Tab.Screen name="Catálogo" component={Catalogo} />
